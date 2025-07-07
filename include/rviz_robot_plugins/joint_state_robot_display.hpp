@@ -11,13 +11,13 @@ class JointStateRobotDisplay: public rviz_common::Display
   Q_OBJECT
 
 public:
-  JointStateRobotDisplay() = default;
+  JointStateRobotDisplay() {};
   virtual ~JointStateRobotDisplay() override = default;
 
 protected:
-  void onInitialize() override;
-  void onEnable() override;
-  void onDisable() override;
+  void onInitialize() override {};
+  void onEnable() override {};
+  void onDisable() override {};
 };
 
 }  // namespace rviz_robot_plugins
