@@ -6,19 +6,18 @@
 namespace rviz_robot_plugins
 {
 
-class JointStateRobotDisplay : public rviz_common::Display
+class JointStateRobotDisplay: public rviz_common::Display
 {
   Q_OBJECT
 
 public:
-  JointStateRobotDisplay() {}
-  ~JointStateRobotDisplay() override = default;
-
-  void onInitialize() override {}
-  void reset() override {}
+  JointStateRobotDisplay() = default;
+  virtual ~JointStateRobotDisplay() override = default;
 
 protected:
-  void update(float wall_dt, float ros_dt) override {}
+  void onInitialize() override;
+  void onEnable() override;
+  void onDisable() override;
 };
 
 }  // namespace rviz_robot_plugins

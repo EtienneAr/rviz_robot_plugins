@@ -3,7 +3,7 @@
          type="rviz_robot_plugins::JointStateRobotDisplay"
          base_class_type="rviz_common::Display">
     <description>
-      Example plugin display.
+      A display for joint states.
     </description>
   </class>
 </library>
