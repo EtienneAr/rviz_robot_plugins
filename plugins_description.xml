@@ -1,0 +1,9 @@
+<library path="rviz_robot_plugins">
+  <class name="MyPluginDisplay"
+         type="rviz_robot_plugins::JointStateRobotDisplay"
+         base_class_type="rviz_common::Display">
+    <description>
+      Example plugin display.
+    </description>
+  </class>
+</library>

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>rviz_robot_plugins</name>
+  <version>0.0.1</version>
+  <description>RViz2 plugin that displays a robot using JointState messages and URDF</description>
+  <maintainer email="etienne.arlaud@inria.fr">earlaud</maintainer>
+  <license>BSD-3-Clause</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>rviz_common</depend>
+  <depend>rviz_rendering</depend>
+  <depend>rviz_default_plugins</depend>
+
+  <export>
+    <rviz_common plugin="${prefix}/plugins_description.xml"/>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
