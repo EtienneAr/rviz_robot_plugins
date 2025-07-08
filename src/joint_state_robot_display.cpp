@@ -1,6 +1,5 @@
 #include <pluginlib/class_list_macros.hpp>
 #include <rosidl_runtime_cpp/traits.hpp>
-#include <std_msgs/msg/string.hpp>
 
 #include "rviz_robot_plugins/joint_state_robot_display.hpp"
 
@@ -23,11 +22,38 @@ void JointStateRobotDisplay::onInitialize()
 {
     rviz_ros_node_ = context_->getRosNodeAbstraction();
     topic_property_->initialize(rviz_ros_node_);
+
+    updateRobotDescriptionTopic();
 }
 
 void JointStateRobotDisplay::updateRobotDescriptionTopic()
 {
-    context_->queueRender();
+    if (topic_property_->isEmpty()) {
+      setStatus(
+        rviz_common::properties::StatusProperty::Error, "Robot Description topic", QString("Error subscribing: Empty topic name"));
+      return;
+    }
+
+    try {
+        robot_model_subscription_.reset();
+
+        rclcpp::Node::SharedPtr node = rviz_ros_node_.lock()->get_raw_node();
+        robot_model_subscription_ =
+            node->create_subscription<std_msgs::msg::String>(
+            topic_property_->getTopicStd(),
+            1,
+            std::bind(&JointStateRobotDisplay::updateRobotModel, this, std::placeholders::_1)
+        );
+        setStatus(rviz_common::properties::StatusProperty::Ok, "Robot Description topic", "OK");
+    } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
+      setStatus(
+        rviz_common::properties::StatusProperty::Error, "Robot Description topic", QString("Error subscribing: ") + e.what());
+    }
+}
+
+void JointStateRobotDisplay::updateRobotModel(std_msgs::msg::String::ConstSharedPtr msg)
+{
+    setStatus(rviz_common::properties::StatusProperty::Ok, "URDF", QString::fromStdString(msg->data));
 }
 
 } //namespace rviz_robot_plugins

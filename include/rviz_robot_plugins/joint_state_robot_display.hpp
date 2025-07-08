@@ -5,6 +5,7 @@
 #include <rviz_common/display_context.hpp>
 #include "rviz_common/properties/ros_topic_property.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
+#include <std_msgs/msg/string.hpp>
 
 namespace rviz_robot_plugins
 {
@@ -28,6 +29,9 @@ protected Q_SLOTS:
 private:
   rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
   rviz_common::properties::RosTopicProperty * topic_property_;
+  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr robot_model_subscription_;
+
+  void updateRobotModel(std_msgs::msg::String::ConstSharedPtr msg);
 };
 
 }  // namespace rviz_robot_plugins
