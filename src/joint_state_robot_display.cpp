@@ -37,11 +37,14 @@ void JointStateRobotDisplay::updateRobotDescriptionTopic()
     try {
         robot_model_subscription_.reset();
 
+        rclcpp::QoS qosLatching = rclcpp::QoS(rclcpp::KeepLast(1));
+        qosLatching.transient_local();
+
         rclcpp::Node::SharedPtr node = rviz_ros_node_.lock()->get_raw_node();
         robot_model_subscription_ =
             node->create_subscription<std_msgs::msg::String>(
             topic_property_->getTopicStd(),
-            1,
+            qosLatching,
             std::bind(&JointStateRobotDisplay::updateRobotModel, this, std::placeholders::_1)
         );
         setStatus(rviz_common::properties::StatusProperty::Ok, "Robot Description topic", "OK");
