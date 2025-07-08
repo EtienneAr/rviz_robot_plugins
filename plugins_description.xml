@@ -1,5 +1,5 @@
 <library path="rviz_robot_plugins">
-  <class name="MyPluginDisplay"
+  <class name="JointState Robot Display"
          type="rviz_robot_plugins::JointStateRobotDisplay"
          base_class_type="rviz_common::Display">
     <description>
