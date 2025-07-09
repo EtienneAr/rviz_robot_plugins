@@ -64,24 +64,31 @@ void JointStateRobotDisplay::updateRobotDescriptionTopic()
 
 void JointStateRobotDisplay::updateRobotModel(std_msgs::msg::String::ConstSharedPtr msg)
 {
+    // Robot description message received
     setStatus(rviz_common::properties::StatusProperty::Ok, "URDF", "Received");
 
+    // Parsing urdf
     urdf::Model descr;
     if (!descr.initString(msg->data)) {
         setStatus(rviz_common::properties::StatusProperty::Error, "URDF", "URDF failed Model parse");
         return;
     }
-
     setStatus(rviz_common::properties::StatusProperty::Ok, "URDF", "URDF parsed OK");
+
+    // Loading robot
     robot_->clear();
     robot_->load(descr);
+
+    // Getting load errors
     std::stringstream ss;
     for (const auto & name_link_pair : robot_->getLinks()) {
         const std::string err = name_link_pair.second->getGeometryErrors();
         if (!err.empty()) {
-        ss << "\n• for link '" << name_link_pair.first << "':\n" << err;
+            ss << "\n• for link '" << name_link_pair.first << "':\n" << err;
         }
     }
+
+    // Display load errors
     if (ss.tellp()) {
         setStatus(rviz_common::properties::StatusProperty::Error, "URDF", QString("Errors loading geometries:").append(ss.str().c_str()));
     }
