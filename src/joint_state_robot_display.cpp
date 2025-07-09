@@ -35,6 +35,8 @@ void JointStateRobotDisplay::updateRobotDescriptionTopic()
     }
 
     try {
+        setStatus(rviz_common::properties::StatusProperty::Warn, "URDF", "Waiting to receive message");
+
         robot_model_subscription_.reset();
 
         rclcpp::QoS qosLatching = rclcpp::QoS(rclcpp::KeepLast(1));
@@ -47,7 +49,7 @@ void JointStateRobotDisplay::updateRobotDescriptionTopic()
             qosLatching,
             std::bind(&JointStateRobotDisplay::updateRobotModel, this, std::placeholders::_1)
         );
-        setStatus(rviz_common::properties::StatusProperty::Ok, "Robot Description topic", "OK");
+        setStatus(rviz_common::properties::StatusProperty::Ok, "Robot Description topic", "Valid");
     } catch (rclcpp::exceptions::InvalidTopicNameError & e) {
       setStatus(
         rviz_common::properties::StatusProperty::Error, "Robot Description topic", QString("Error subscribing: ") + e.what());
@@ -56,7 +58,7 @@ void JointStateRobotDisplay::updateRobotDescriptionTopic()
 
 void JointStateRobotDisplay::updateRobotModel(std_msgs::msg::String::ConstSharedPtr msg)
 {
-    setStatus(rviz_common::properties::StatusProperty::Ok, "URDF", QString::fromStdString(msg->data));
+    setStatus(rviz_common::properties::StatusProperty::Ok, "URDF", "Received");
 }
 
 } //namespace rviz_robot_plugins
