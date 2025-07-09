@@ -2,6 +2,7 @@
 #include <rosidl_runtime_cpp/traits.hpp>
 
 #include "rviz_robot_plugins/joint_state_robot_display.hpp"
+#include "rviz_default_plugins/robot/robot_link.hpp"
 
 namespace rviz_robot_plugins
 {
@@ -20,9 +21,14 @@ JointStateRobotDisplay::JointStateRobotDisplay()
 
 void JointStateRobotDisplay::onInitialize()
 {
+    // Init ros node and topics
     rviz_ros_node_ = context_->getRosNodeAbstraction();
     topic_property_->initialize(rviz_ros_node_);
 
+    // Init visual robot
+    robot_ = std::make_unique<rviz_default_plugins::robot::Robot>(scene_node_, context_, "Robot: ", this);
+
+    // Read topics
     updateRobotDescriptionTopic();
 }
 
@@ -59,6 +65,26 @@ void JointStateRobotDisplay::updateRobotDescriptionTopic()
 void JointStateRobotDisplay::updateRobotModel(std_msgs::msg::String::ConstSharedPtr msg)
 {
     setStatus(rviz_common::properties::StatusProperty::Ok, "URDF", "Received");
+
+    urdf::Model descr;
+    if (!descr.initString(msg->data)) {
+        setStatus(rviz_common::properties::StatusProperty::Error, "URDF", "URDF failed Model parse");
+        return;
+    }
+
+    setStatus(rviz_common::properties::StatusProperty::Ok, "URDF", "URDF parsed OK");
+    robot_->clear();
+    robot_->load(descr);
+    std::stringstream ss;
+    for (const auto & name_link_pair : robot_->getLinks()) {
+        const std::string err = name_link_pair.second->getGeometryErrors();
+        if (!err.empty()) {
+        ss << "\n• for link '" << name_link_pair.first << "':\n" << err;
+        }
+    }
+    if (ss.tellp()) {
+        setStatus(rviz_common::properties::StatusProperty::Error, "URDF", QString("Errors loading geometries:").append(ss.str().c_str()));
+    }
 }
 
 } //namespace rviz_robot_plugins

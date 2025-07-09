@@ -6,6 +6,7 @@
 #include "rviz_common/properties/ros_topic_property.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction_iface.hpp"
 #include <std_msgs/msg/string.hpp>
+#include "rviz_default_plugins/robot/robot.hpp"
 
 namespace rviz_robot_plugins
 {
@@ -32,6 +33,8 @@ private:
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr robot_model_subscription_;
 
   void updateRobotModel(std_msgs::msg::String::ConstSharedPtr msg);
+
+  std::unique_ptr<rviz_default_plugins::robot::Robot> robot_;
 };
 
 }  // namespace rviz_robot_plugins
